@@ -54,7 +54,7 @@ public class YuTestCreateEvent extends AbstractJavaSamplerClient {
             HttpEntity<?> requestEntity = new HttpEntity<Object>(eventVo, requestHeaders);
 
             ResponseEntity<String> responseEntity=restTemplate.
-                    postForEntity("http://10.50.8.39:8083/serviceEvent/event/addSealedEvent",requestEntity,String.class);
+                    postForEntity("http://10.50.8.39:8083/"+Constants.ADD_EVENT,requestEntity,String.class);
             String body = responseEntity.getBody();
             JSONObject jsonObject = JSONObject.parseObject(body);
             int code = (int) jsonObject.get("code");
@@ -65,7 +65,7 @@ public class YuTestCreateEvent extends AbstractJavaSamplerClient {
                 requestEntity = new HttpEntity<Object>(map, requestHeaders);
                 Thread.sleep(1000);
                 responseEntity=restTemplate.
-                        postForEntity("http://10.50.8.39:8083/serviceEvent/event/confirmSend?eventNo="+eventNo,requestEntity,String.class);
+                        postForEntity("http://10.50.8.39:8083"+Constants.CONFIRM_SEND+"?eventNo="+eventNo,requestEntity,String.class);
                 //System.out.println(responseEntity.getBody());
                 result.setResponseData(responseEntity.getBody(),"utf-8");
                 result.setDataType(SampleResult.TEXT);

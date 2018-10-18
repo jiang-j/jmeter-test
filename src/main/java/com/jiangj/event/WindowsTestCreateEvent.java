@@ -3,22 +3,25 @@ package com.jiangj.event;
 import com.alibaba.fastjson.JSONObject;
 import com.jiangj.event.vo.EventContent;
 import com.jiangj.event.vo.EventVo;
+import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.protocol.java.sampler.AbstractJavaSamplerClient;
 import org.apache.jmeter.protocol.java.sampler.JavaSamplerContext;
 import org.apache.jmeter.samplers.SampleResult;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.List;
 
 /**
  * @author Jiang Jian
  * @since 2018/10/13
  */
-public class TestCreateEvent extends AbstractJavaSamplerClient {
+public class WindowsTestCreateEvent extends AbstractJavaSamplerClient {
 
     RestTemplate restTemplate = new RestTemplate();
 
@@ -51,18 +54,18 @@ public class TestCreateEvent extends AbstractJavaSamplerClient {
             HttpEntity<?> requestEntity = new HttpEntity<Object>(eventVo, requestHeaders);
 
             ResponseEntity<String> responseEntity=restTemplate.
-                    postForEntity("http://172.18.10.213:9094" + Constants.ADD_EVENT,requestEntity,String.class);
+                    postForEntity("http://10.50.8.133:8083"+Constants.ADD_EVENT,requestEntity,String.class);
             String body = responseEntity.getBody();
             JSONObject jsonObject = JSONObject.parseObject(body);
             int code = (int) jsonObject.get("code");
             if (1 == code){
-                Thread.sleep(1000);
                 JSONObject jsonObject1 = (JSONObject)jsonObject.get("result");
                 String eventNo = jsonObject1.getString("eventNo");
                 Map<String,String> map = new HashMap<>(1);
                 requestEntity = new HttpEntity<Object>(map, requestHeaders);
+                Thread.sleep(1000);
                 responseEntity=restTemplate.
-                        postForEntity("http://172.18.10.213:9094"+Constants.CONFIRM_SEND+"?eventNo="+eventNo,requestEntity,String.class);
+                        postForEntity("http://10.50.8.133:8083" + Constants.CONFIRM_SEND + "?eventNo="+eventNo,requestEntity,String.class);
                 //System.out.println(responseEntity.getBody());
                 result.setResponseData(responseEntity.getBody(),"utf-8");
                 result.setDataType(SampleResult.TEXT);
@@ -84,6 +87,13 @@ public class TestCreateEvent extends AbstractJavaSamplerClient {
     public static String getRandom() {
         Random r = new Random();
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) +r.nextInt(1000000);
+    }
+
+    public static void main(String[] args) {
+        WindowsTestCreateEvent tets = new WindowsTestCreateEvent();
+        Arguments arg = new Arguments();
+        JavaSamplerContext context = new JavaSamplerContext(arg);
+        tets.runTest(context);
     }
 
 }
