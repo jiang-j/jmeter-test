@@ -15,13 +15,15 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * @author Jiang Jian
  * @since 2018/10/13
  */
-public class LocalTestCreateEvent extends AbstractJavaSamplerClient {
+public class LocalNginxTestCreateEvent extends AbstractJavaSamplerClient {
 
     RestTemplate restTemplate = new RestTemplate();
 
@@ -54,7 +56,7 @@ public class LocalTestCreateEvent extends AbstractJavaSamplerClient {
             HttpEntity<?> requestEntity = new HttpEntity<Object>(eventVo, requestHeaders);
 
             ResponseEntity<String> responseEntity=restTemplate.
-                    postForEntity("http://127.0.0.1:8083" +Constants.ADD_EVENT,requestEntity,String.class);
+                    postForEntity("http://localhost" +Constants.ADD_EVENT,requestEntity,String.class);
             String body = responseEntity.getBody();
             JSONObject jsonObject = JSONObject.parseObject(body);
             int code = (int) jsonObject.get("code");
@@ -90,7 +92,7 @@ public class LocalTestCreateEvent extends AbstractJavaSamplerClient {
     }
 
     public static void main(String[] args) {
-        LocalTestCreateEvent tets = new LocalTestCreateEvent();
+        LocalNginxTestCreateEvent tets = new LocalNginxTestCreateEvent();
         Arguments arg = new Arguments();
         JavaSamplerContext context = new JavaSamplerContext(arg);
         tets.runTest(context);
