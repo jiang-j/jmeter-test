@@ -54,26 +54,31 @@ public class LocalTestCreateEvent extends AbstractJavaSamplerClient {
             HttpEntity<?> requestEntity = new HttpEntity<Object>(eventVo, requestHeaders);
 
             ResponseEntity<String> responseEntity=restTemplate.
-                    postForEntity("http://127.0.0.1:8083" +Constants.ADD_EVENT,requestEntity,String.class);
+                    postForEntity("http://127.0.0.1:6060" +Constants.ADD_EVENT,requestEntity,String.class);
             String body = responseEntity.getBody();
             JSONObject jsonObject = JSONObject.parseObject(body);
             int code = (int) jsonObject.get("code");
+            result.setDataType(SampleResult.TEXT);
             if (1 == code){
                 JSONObject jsonObject1 = (JSONObject)jsonObject.get("result");
                 String eventNo = jsonObject1.getString("eventNo");
-//                Map<String,String> map = new HashMap<>(1);
-//                requestEntity = new HttpEntity<Object>(map, requestHeaders);
-//                responseEntity=restTemplate.
-//                        postForEntity("http://172.18.10.213:9094"+Constants.CONFIRM_SEND+"?eventNo="+eventNo,requestEntity,String.class);
-//                //System.out.println(responseEntity.getBody());
-                //result.setResponseData(responseEntity.getBody(),"utf-8");
+                Map<String,String> map = new HashMap<>(1);
+                requestEntity = new HttpEntity<Object>(map, requestHeaders);
+                responseEntity=restTemplate.
+                        postForEntity("http://127.0.0.1:6060"+Constants.CONFIRM_SEND+"?eventNo="+eventNo,requestEntity,String.class);
+                //System.out.println(responseEntity.getBody());
+                if (null != responseEntity && null != responseEntity.getBody()){
+                    String resultBody = responseEntity.getBody();
+                    code = JSONObject.parseObject(resultBody).getIntValue("code");
+                    if (1 == code){
+                        result.setResponseData(eventNo,"utf-8");
+                        result.setSuccessful(true);
+                        return result;
+                    }
+                }
                 result.setResponseData(eventNo,"utf-8");
-                result.setDataType(SampleResult.TEXT);
-                result.setSuccessful(true);
-            }else {
-                result.setSuccessful(false);
             }
-
+            result.setSuccessful(false);
             //=============end ========
         }catch (Exception e){
             result.setSuccessful(false);

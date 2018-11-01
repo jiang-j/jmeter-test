@@ -61,13 +61,13 @@ public class MacTestCreateEvent extends AbstractJavaSamplerClient {
             if (1 == code){
                 JSONObject jsonObject1 = (JSONObject)jsonObject.get("result");
                 String eventNo = jsonObject1.getString("eventNo");
-                Map<String,String> map = new HashMap<>(1);
+                /*Map<String,String> map = new HashMap<>(1);
                 requestEntity = new HttpEntity<Object>(map, requestHeaders);
                 Thread.sleep(1000);
                 responseEntity=restTemplate.
                         postForEntity("http://10.50.8.132:8083" + Constants.CONFIRM_SEND + "?eventNo="+eventNo,requestEntity,String.class);
-                //System.out.println(responseEntity.getBody());
-                result.setResponseData(responseEntity.getBody(),"utf-8");
+                //System.out.println(responseEntity.getBody());*/
+                result.setResponseData(eventNo,"utf-8");
                 result.setDataType(SampleResult.TEXT);
                 result.setSuccessful(true);
             }else {

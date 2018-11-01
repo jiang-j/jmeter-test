@@ -56,22 +56,25 @@ public class TestCreateEvent extends AbstractJavaSamplerClient {
             JSONObject jsonObject = JSONObject.parseObject(body);
             int code = (int) jsonObject.get("code");
             if (1 == code){
-                Thread.sleep(1000);
                 JSONObject jsonObject1 = (JSONObject)jsonObject.get("result");
                 String eventNo = jsonObject1.getString("eventNo");
-//                Map<String,String> map = new HashMap<>(1);
-//                requestEntity = new HttpEntity<Object>(map, requestHeaders);
-//                responseEntity=restTemplate.
-//                        postForEntity("http://172.18.10.213:9094"+Constants.CONFIRM_SEND+"?eventNo="+eventNo,requestEntity,String.class);
-//                //System.out.println(responseEntity.getBody());
-                //result.setResponseData(responseEntity.getBody(),"utf-8");
+                Map<String,String> map = new HashMap<>(1);
+                requestEntity = new HttpEntity<Object>(map, requestHeaders);
+                responseEntity=restTemplate.
+                        postForEntity("http://172.18.10.213:9094"+Constants.CONFIRM_SEND+"?eventNo="+eventNo,requestEntity,String.class);
+                //System.out.println(responseEntity.getBody());
+                if (null != responseEntity && null != responseEntity.getBody()){
+                    String resultBody = responseEntity.getBody();
+                    code = JSONObject.parseObject(resultBody).getIntValue("code");
+                    if (1 == code){
+                        result.setResponseData(eventNo,"utf-8");
+                        result.setSuccessful(true);
+                        return result;
+                    }
+                }
                 result.setResponseData(eventNo,"utf-8");
-                result.setDataType(SampleResult.TEXT);
-                result.setSuccessful(true);
-            }else {
-                result.setSuccessful(false);
             }
-
+            result.setSuccessful(false);
             //=============end ========
         }catch (Exception e){
             result.setSuccessful(false);
